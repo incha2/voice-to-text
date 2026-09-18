@@ -3,51 +3,74 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#111827">
+<meta name="theme-color" content="#111827" id="themeColor">
 <title>Voice to Text — Android Chrome</title>
 <style>
 *{box-sizing:border-box}
-:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
-body{margin:0;background:#f3f4f6;color:#111827}
-.app{max-width:760px;margin:auto;padding:12px;padding-bottom:36px}
-.header{padding:10px 4px 16px}
-h1{font-size:26px;line-height:1.15;margin:0 0 5px}
-.sub{margin:0;color:#6b7280;font-size:14px}
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color-scheme:light}
+:root[data-theme="dark"]{color-scheme:dark}
+body{margin:0;background:#f3f4f6;color:#111827;transition:.2s}
+:root[data-theme="dark"] body{background:#0f172a;color:#e5e7eb}
+.app{max-width:780px;margin:auto;padding:12px;padding-bottom:40px}
+.header{padding:10px 4px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+h1{font-size:26px;line-height:1.15;margin:0 0 5px}.sub{margin:0;color:#6b7280;font-size:14px}
+.headerBtns{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
+.iconBtn{min-height:42px;padding:8px 11px;border-radius:12px;border:1px solid #d1d5db;background:#fff;font-size:14px}
 .card{background:#fff;border-radius:20px;padding:14px;box-shadow:0 5px 24px rgba(0,0,0,.08)}
+:root[data-theme="dark"] .card,:root[data-theme="dark"] .iconBtn,:root[data-theme="dark"] select,:root[data-theme="dark"] button,:root[data-theme="dark"] textarea{background:#172033;color:#e5e7eb;border-color:#334155}
 select,button{min-height:50px;border-radius:13px;border:1px solid #d1d5db;background:#fff;padding:10px 13px;font-size:15px;font-weight:650}
-select{width:100%;font-weight:500}
-button{touch-action:manipulation}
-button.primary{background:#2563eb;border-color:#2563eb;color:#fff}
-button.pause{background:#f59e0b;border-color:#f59e0b;color:#fff}
-button.stop{background:#dc2626;border-color:#dc2626;color:#fff}
+select{width:100%;font-weight:500}button{touch-action:manipulation}
+button.primary{background:#2563eb;border-color:#2563eb;color:#fff}button.pause{background:#f59e0b;border-color:#f59e0b;color:#fff}button.stop{background:#dc2626;border-color:#dc2626;color:#fff}
 button:disabled{opacity:.42}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .status{display:flex;align-items:center;gap:10px;margin:12px 0 9px;padding:12px;border-radius:13px;background:#f3f4f6;font-size:14px;min-height:46px}
-.dot{width:11px;height:11px;border-radius:50%;background:#9ca3af;flex:none}
-.dot.on{background:#ef4444;box-shadow:0 0 0 6px rgba(239,68,68,.12);animation:pulse 1.15s infinite}
-.dot.ok{background:#16a34a}.dot.warn{background:#f59e0b}
+:root[data-theme="dark"] .status{background:#111827}
+.dot{width:11px;height:11px;border-radius:50%;background:#9ca3af;flex:none}.dot.on{background:#ef4444;box-shadow:0 0 0 6px rgba(239,68,68,.12);animation:pulse 1.15s infinite}.dot.ok{background:#16a34a}.dot.warn{background:#f59e0b}
 @keyframes pulse{50%{transform:scale(1.2);opacity:.65}}
 .controls{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:9px;margin-bottom:10px}
 .label{font-size:12px;font-weight:700;color:#6b7280;margin:12px 2px 6px;text-transform:uppercase;letter-spacing:.04em}
-textarea{display:block;width:100%;min-height:320px;resize:vertical;border:1px solid #d1d5db;border-radius:14px;padding:14px;font:16px/1.62 system-ui,sans-serif;outline:0;background:#fff}
+textarea{display:block;width:100%;min-height:340px;resize:vertical;border:1px solid #d1d5db;border-radius:14px;padding:14px;font:16px/1.62 system-ui,sans-serif;outline:0;background:#fff;color:#111827}
 textarea:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+:root[data-theme="dark"] textarea{color:#f8fafc}
 .live{min-height:42px;padding:10px 12px;border:1px dashed #cbd5e1;border-radius:12px;background:#f8fafc;color:#64748b;font-size:14px;line-height:1.45}
+:root[data-theme="dark"] .live{background:#111827;border-color:#334155}
 .live.active{color:#1d4ed8;background:#eff6ff;border-color:#93c5fd}
-.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.secondary{background:#f8fafc}
+:root[data-theme="dark"] .secondary{background:#111827}
 .meta{display:flex;justify-content:space-between;gap:10px;color:#6b7280;font-size:12px;margin-top:9px;flex-wrap:wrap}
 .help{margin-top:14px;padding:13px;border-radius:13px;background:#eff6ff;color:#1e3a8a;font-size:13px;line-height:1.55}
+:root[data-theme="dark"] .help{background:#172554;color:#bfdbfe}
 .danger{display:none;margin-top:12px;padding:13px;border-radius:13px;background:#fef2f2;color:#991b1b;font-size:13px;line-height:1.55}
 .tip{margin-top:12px;color:#6b7280;font-size:12px;line-height:1.5}
+.settings{margin-top:12px;padding:12px;border:1px solid #e5e7eb;border-radius:14px;background:#fafafa}
+:root[data-theme="dark"] .settings{background:#111827;border-color:#334155}
+.settingGrid{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.setting{display:flex;align-items:center;gap:8px;font-size:13px;color:#374151}
+:root[data-theme="dark"] .setting{color:#d1d5db}
+.setting input{width:18px;height:18px}
+.restore{display:none;margin-top:12px;padding:12px;border-radius:13px;background:#ecfdf5;color:#166534;font-size:13px}
+.restore button{min-height:40px;margin:7px 5px 0 0;padding:7px 10px}
+.saveState{font-size:11px;color:#6b7280}
 .small{font-size:12px;color:#6b7280}
-@media(max-width:520px){.row,.controls{grid-template-columns:1fr}.actions{grid-template-columns:1fr}.app{padding:10px}.card{padding:12px}textarea{min-height:300px}}
+.font-small{font-size:14px!important;line-height:1.6!important}
+.font-large{font-size:19px!important;line-height:1.7!important}
+.fullscreen{position:fixed!important;inset:0!important;z-index:9999;max-width:none!important;border-radius:0!important;overflow:auto!important;padding:12px!important}
+@media(max-width:520px){.row,.controls,.settingGrid{grid-template-columns:1fr}.actions{grid-template-columns:1fr 1fr}.app{padding:10px}.card{padding:12px}textarea{min-height:300px}.header{align-items:flex-start}}
 </style>
 </head>
 <body>
-<div class="app">
+<div class="app" id="app">
   <div class="header">
-    <h1>🎙️ Voice to Text</h1>
-    <p class="sub">Android Chrome • stable dictation mode</p>
+    <div><h1>🎙️ Voice to Text</h1><p class="sub">Android Chrome • stable dictation mode</p></div>
+    <div class="headerBtns">
+      <button class="iconBtn" id="themeBtn" title="Toggle dark mode">🌙</button>
+      <button class="iconBtn" id="fontDown" title="Smaller text">A−</button>
+      <button class="iconBtn" id="fontUp" title="Larger text">A+</button>
+      <button class="iconBtn" id="fullBtn" title="Full screen">⛶</button>
+    </div>
   </div>
+
   <div class="card">
     <div class="row">
       <select id="language" aria-label="Speech language">
@@ -68,6 +91,11 @@ textarea:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
 
     <div class="status"><span id="dot" class="dot"></span><span id="status">Ready. Check microphone once, then start.</span><span id="timer" class="small" style="margin-left:auto"></span></div>
     <div id="problem" class="danger"></div>
+    <div id="restore" class="restore">
+      <strong>💾 A previous transcript was saved on this device.</strong>
+      <div><span id="restoreInfo"></span></div>
+      <button id="restoreBtn">Restore</button><button id="discardBtn">Discard saved copy</button>
+    </div>
 
     <div class="controls">
       <button id="start" class="primary" disabled>🎙️ Start Listening</button>
@@ -82,73 +110,192 @@ textarea:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
     <div id="live" class="live">Nothing being recognized right now.</div>
 
     <div class="actions">
-      <button id="copy">📋 Copy</button>
-      <button id="download">💾 Save TXT</button>
-      <button id="clear">🗑️ Clear</button>
+      <button id="undo" class="secondary">↩️ Undo Sentence</button>
+      <button id="copy" class="secondary">📋 Copy</button>
+      <button id="download" class="secondary">💾 Save TXT</button>
+      <button id="clear" class="secondary">🗑️ Clear</button>
     </div>
 
     <div class="meta">
       <span><span id="words">0</span> words</span>
       <span><span id="chars">0</span> characters</span>
-      <span>Final text only — no interim duplicates</span>
+      <span class="saveState" id="saveState">Auto-save ready</span>
+    </div>
+
+    <div class="settings">
+      <div class="label" style="margin-top:0">Smart options</div>
+      <div class="settingGrid">
+        <label class="setting"><input type="checkbox" id="punctuation" checked> Automatic punctuation</label>
+        <label class="setting"><input type="checkbox" id="commands" checked> Voice commands</label>
+        <label class="setting"><input type="checkbox" id="autoSave" checked> Auto-save transcript</label>
+        <label class="setting"><input type="checkbox" id="autoParagraph" checked> New paragraphs from command</label>
+      </div>
+      <div class="tip" style="margin-bottom:0">
+        Say <strong>comma</strong>, <strong>full stop</strong>, <strong>question mark</strong>, <strong>new line</strong>, <strong>new paragraph</strong>, or <strong>undo last sentence</strong>. Say <strong>stop listening</strong> to stop. Voice commands are currently English phrases.
+      </div>
     </div>
 
     <div class="help">
-      <strong>How this version works:</strong> Chrome recognition runs in short sessions and is restarted automatically after Chrome ends a session. Final speech is added only once; interim speech is shown separately in <strong>Live speech</strong>. This avoids the repeated-word problem you experienced.
+      <strong>Stable dictation:</strong> Chrome recognition uses short sessions and restarts them automatically. Final speech is committed once; interim speech stays in <strong>Live speech</strong>. This design helps avoid the repeated-word problem. The Web Speech API exposes final/interim results separately and uses <code>resultIndex</code> to identify changed results. citeturn0search0turn0search4
     </div>
-    <div class="tip">Keep an internet connection while dictating. Chrome speech recognition may use a server-based recognition service. citeturn0search0</div>
+    <div class="tip">Keep an internet connection while dictating. Chrome speech recognition may use a server-based recognition service, depending on the browser/implementation. citeturn0search0</div>
   </div>
 </div>
+
 <script>
 (() => {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   const $ = id => document.getElementById(id);
-  const lang = $('language'), permissionBtn=$('permissionBtn'), startBtn=$('start'), pauseBtn=$('pause'), stopBtn=$('stop');
+  const app=$('app'), lang=$('language'), permissionBtn=$('permissionBtn'), startBtn=$('start'), pauseBtn=$('pause'), stopBtn=$('stop');
   const text=$('text'), live=$('live'), status=$('status'), dot=$('dot'), problem=$('problem'), timer=$('timer'), words=$('words'), chars=$('chars');
-  let recognition=null, micOK=false, micStream=null, userStopped=true, paused=false, restarting=false;
-  let finalText='', lastFinal='', sessionStarted=0, timerId=null, restartTimer=null, noResultTimer=null;
+  const punctuation=$('punctuation'), commands=$('commands'), autoSave=$('autoSave'), autoParagraph=$('autoParagraph');
+  const restore=$('restore'), restoreInfo=$('restoreInfo'), saveState=$('saveState');
+  const STORAGE='voiceToTextV4';
+  let recognition=null, micOK=false, micStream=null, userStopped=true, paused=false;
+  let restarting=false, finalText='', lastFinal='', restartTimer=null, noResultTimer=null, saveTimer=null;
+  let elapsedMs=0, timerStarted=0, timerId=null, fontLevel=0;
 
   function setStatus(msg,type=''){status.textContent=msg;dot.className='dot'+(type?' '+type:'')}
   function showProblem(html){problem.innerHTML=html;problem.style.display='block'}
   function hideProblem(){problem.innerHTML='';problem.style.display='none'}
-  function counts(){const s=text.value.trim();words.textContent=s?s.split(/\s+/).length:0;chars.textContent=text.value.length}
+  function counts(){const s=text.value.trim();words.textContent=s?s.split(/\\s+/).length:0;chars.textContent=text.value.length}
   function setLive(s){live.textContent=s||'Nothing being recognized right now.';live.className='live'+(s?' active':'')}
   function isHTTPS(){return location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'}
   function releaseMic(){if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null}}
   function formatTime(ms){const s=Math.floor(ms/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
-  function startTimer(){sessionStarted=Date.now();clearInterval(timerId);timer.textContent='00:00';timerId=setInterval(()=>timer.textContent=formatTime(Date.now()-sessionStarted),500)}
-  function stopTimer(){clearInterval(timerId);timerId=null;timer.textContent=''}
+  function startTimer(){if(timerId)return;timerStarted=Date.now();timerId=setInterval(()=>timer.textContent=formatTime(elapsedMs+(Date.now()-timerStarted)),500)}
+  function pauseTimer(){if(!timerId)return;elapsedMs+=Date.now()-timerStarted;clearInterval(timerId);timerId=null;timer.textContent=formatTime(elapsedMs)}
+  function resetTimer(){clearInterval(timerId);timerId=null;elapsedMs=0;timerStarted=0;timer.textContent='00:00'}
+  function finishTimer(){pauseTimer();if(!elapsedMs)timer.textContent=''}
+  function saveNow(){
+    if(!autoSave.checked)return;
+    try{
+      localStorage.setItem(STORAGE,JSON.stringify({text:text.value,language:lang.value,when:Date.now()}));
+      saveState.textContent='Saved locally';
+    }catch(e){saveState.textContent='Auto-save unavailable'}
+  }
+  function scheduleSave(){if(!autoSave.checked)return;saveState.textContent='Saving…';clearTimeout(saveTimer);saveTimer=setTimeout(saveNow,450)}
+  function removeSaved(){try{localStorage.removeItem(STORAGE)}catch(e){}saveState.textContent='Auto-save cleared'}
+  function normalize(s){return (s||'').replace(/\\s+/g,' ').trim()}
+  function capitalizeAfterSentence(s){
+    return s.replace(/(^|[.!?]\\s+)([a-z])/g,(m,a,b)=>a+b.toUpperCase());
+  }
+  function smartPunctuate(s){
+    if(!punctuation.checked)return s;
+    s=s.trim();
+    if(!s)return s;
+    // Explicit spoken punctuation is handled separately; this is a conservative
+    // sentence-ending helper for Chrome's short final recognition chunks.
+    if(/[.!?。！？]$/.test(s))return s;
+    if(s.split(/\\s+/).length>=6)return s+'.';
+    return s;
+  }
+  function processSpoken(raw){
+    let s=normalize(raw);
+    if(!s)return {text:'',action:''};
+    if(commands.checked){
+      const low=s.toLowerCase();
+      if(/^stop listening$/.test(low)||/^stop dictation$/.test(low))return {text:'',action:'stop'};
+      if(/^pause listening$/.test(low)||/^pause dictation$/.test(low))return {text:'',action:'pause'};
+      if(/^resume listening$/.test(low)||/^resume dictation$/.test(low))return {text:'',action:'resume'};
+      if(/^undo last sentence$/.test(low)||/^undo sentence$/.test(low))return {text:'',action:'undo'};
+      if(/^clear transcript$/.test(low))return {text:'',action:'clear'};
+      if(/^new paragraph$/.test(low))return {text:'\\n\\n',action:''};
+      if(/^new line$/.test(low))return {text:'\\n',action:''};
 
-  if(!SR){setStatus('Speech recognition is not available in this Chrome environment.','warn');showProblem('<strong>Speech recognition unavailable.</strong><br>Use current Google Chrome with JavaScript enabled.');startBtn.disabled=true;return}
+      let out=s;
+      out=out.replace(/\\bnew paragraph\\b/gi,autoParagraph.checked?'\\n\\n':' ');
+      out=out.replace(/\\bnew line\\b/gi,'\\n');
+      out=out.replace(/\\bopen quote\\b/gi,'“').replace(/\\bclose quote\\b/gi,'”');
+      out=out.replace(/\\bquestion mark\\b/gi,'?').replace(/\\bexclamation (?:mark|point)\\b/gi,'!');
+      out=out.replace(/\\bfull stop\\b/gi,'.').replace(/\\bperiod\\b/gi,'.');
+      out=out.replace(/\\bcomma\\b/gi,',').replace(/\\bcolon\\b/gi,':').replace(/\\bsemicolon\\b/gi,';');
+      out=out.replace(/\\bhyphen\\b/gi,'-').replace(/\\bdash\\b/gi,'—');
+      out=out.replace(/\\s+([,.;:!?])/g,'$1').replace(/([,.;:!?])(?=\\S)/g,'$1 ');
+      out=out.replace(/\\n\\s*/g,'\\n').replace(/[ \\t]+/g,' ');
+      out=out.trim();
+      if(out)return {text:out,action:''};
+    }
+    return {text:smartPunctuate(s),action:''};
+  }
+  function appendFinal(part){
+    const processed=processSpoken(part);
+    if(processed.action==='stop'){stop();return}
+    if(processed.action==='pause'){pause();return}
+    if(processed.action==='resume'){resume();return}
+    if(processed.action==='undo'){undoLastSentence();return}
+    if(processed.action==='clear'){clearTranscript();return}
+    part=processed.text;
+    if(!part)return;
+    // Only reject an identical final result from the same immediate recognition flow.
+    if(part===lastFinal)return;
+    lastFinal=part;
+    let current=finalText.trim();
+    if(part==='\\n'||part==='\\n\\n'){
+      finalText=current+(current?'':'')+part;
+    }else{
+      if(current && !/[\\s\\n]$/.test(finalText) && !/^[-—,.;:!?]/.test(part))finalText+=' ';
+      finalText+=part;
+      finalText=finalText.replace(/[ \\t]+\\n/g,'\\n').replace(/\\n{3,}/g,'\\n\\n');
+    }
+    finalText=capitalizeAfterSentence(finalText);
+    text.value=finalText.trim();
+    counts();scheduleSave();
+  }
+  function undoLastSentence(){
+    let s=text.value.replace(/[ \\t]+$/,'');
+    if(!s)return;
+    const matches=[...s.matchAll(/[.!?。！？]/g)];
+    if(matches.length){
+      const last=matches[matches.length-1].index;
+      const before=s.slice(0,last);
+      const prev=[...before.matchAll(/[.!?。！？]/g)];
+      const start=prev.length?prev[prev.length-1].index+1:0;
+      s=s.slice(0,start).trim();
+    }else{
+      const lines=s.split(/\\n+/);
+      if(lines.length>1)lines.pop(),s=lines.join('\\n').trim();
+      else{s=s.split(/\\s+/);s.splice(Math.max(0,s.length-Math.min(10,s.length)));s=s.join(' ')}
+    }
+    finalText=s;text.value=s;lastFinal='';counts();scheduleSave();setStatus('Last sentence undone.','ok')
+  }
+  function clearTranscript(){
+    stop();
+    text.value='';finalText='';lastFinal='';counts();removeSaved();restore.style.display='none';setStatus('Text cleared. Ready.','')
+  }
+
+  if(!SR){
+    setStatus('Speech recognition is not available in this Chrome environment.','warn');
+    showProblem('<strong>Speech recognition unavailable.</strong><br>Use current Google Chrome with JavaScript enabled.');
+    startBtn.disabled=true;return;
+  }
 
   async function checkMicrophone(){
-    hideProblem(); releaseMic();
-    if(!navigator.mediaDevices?.getUserMedia){setStatus('Microphone API unavailable.','warn');showProblem('<strong>Microphone API unavailable.</strong><br>Use the HTTPS GitHub Pages version, not the downloaded HTML file.');return false}
+    hideProblem();releaseMic();
+    if(!navigator.mediaDevices?.getUserMedia){
+      setStatus('Microphone API unavailable.','warn');
+      showProblem('<strong>Microphone API unavailable.</strong><br>Use the HTTPS GitHub Pages version, not the downloaded HTML file.');return false;
+    }
     try{
       micStream=await navigator.mediaDevices.getUserMedia({audio:true});
-      micOK=true; releaseMic(); startBtn.disabled=false;
+      micOK=true;releaseMic();startBtn.disabled=false;
       setStatus('Microphone verified. Ready to listen.','ok');
-      if(!isHTTPS()) showProblem('<strong>This page is not HTTPS.</strong><br>Use the GitHub Pages HTTPS address for the most reliable Android Chrome behavior.');
+      if(!isHTTPS())showProblem('<strong>This page is not HTTPS.</strong><br>Use the GitHub Pages HTTPS address for reliable Android Chrome behavior.');
       return true;
     }catch(e){
       micOK=false;startBtn.disabled=true;
       if(e.name==='NotAllowedError'||e.name==='PermissionDeniedError'){
-        setStatus('Microphone permission was denied.','warn');showProblem('<strong>Chrome blocked this page from using the microphone.</strong><br>Open Chrome site settings for this website and set Microphone to Allow, then reload.');
-      }else if(e.name==='NotFoundError'){setStatus('No microphone found.','warn');showProblem('<strong>No microphone detected.</strong><br>Check the phone microphone and close other apps that may be using it.');}
-      else{setStatus('Microphone error: '+e.name,'warn');showProblem('<strong>Microphone error:</strong> '+(e.message||e.name));}
+        setStatus('Microphone permission was denied.','warn');
+        showProblem('<strong>Chrome blocked this page from using the microphone.</strong><br>Open Chrome site settings for this website and set Microphone to Allow, then reload.');
+      }else if(e.name==='NotFoundError'){
+        setStatus('No microphone found.','warn');
+        showProblem('<strong>No microphone detected.</strong><br>Check the phone microphone and close other apps that may be using it.');
+      }else{
+        setStatus('Microphone error: '+e.name,'warn');
+        showProblem('<strong>Microphone error:</strong> '+(e.message||e.name));
+      }
       return false;
     }
-  }
-
-  function appendFinal(part){
-    part=(part||'').replace(/\s+/g,' ').trim(); if(!part)return;
-    // Prevent duplicate final chunks, including Chrome repeating the same final phrase.
-    if(part===lastFinal)return;
-    const current=finalText.trim();
-    if(current && (current===part || current.endsWith(' '+part) || part===current.slice(-part.length))) return;
-    finalText=(current+' '+part).replace(/\s+/g,' ').trim()+' ';
-    lastFinal=part;
-    text.value=finalText.trim();counts();
   }
 
   function setup(){
@@ -159,19 +306,22 @@ textarea:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
     recognition.lang=lang.value;
 
     recognition.onstart=()=>{
-      restarting=false;startBtn.disabled=true;pauseBtn.disabled=false;stopBtn.disabled=false;permissionBtn.disabled=true;
-      setStatus(paused?'Paused':'Listening… speak now.',paused?'warn':'on');
+      restarting=false;
+      startBtn.disabled=true;pauseBtn.disabled=false;stopBtn.disabled=false;permissionBtn.disabled=true;
+      pauseBtn.textContent='⏸ Pause';
+      setStatus('Listening… speak now.','on');
       startTimer();
       clearTimeout(noResultTimer);
-      noResultTimer=setTimeout(()=>{if(!userStopped&&!paused&&live.textContent==='Nothing being recognized right now.')setStatus('Listening… waiting for speech.', 'warn')},7000);
+      noResultTimer=setTimeout(()=>{if(!userStopped&&!paused&&live.textContent==='Nothing being recognized right now.')setStatus('Listening… waiting for speech.','warn')},7000);
     };
 
     recognition.onresult=(event)=>{
-      clearTimeout(noResultTimer); hideProblem();
+      clearTimeout(noResultTimer);hideProblem();
       let interim='';
       for(let i=event.resultIndex;i<event.results.length;i++){
-        const r=event.results[i]; const part=(r[0]?.transcript||'').trim(); if(!part)continue;
-        if(r.isFinal) appendFinal(part); else interim+=(part+' ');
+        const r=event.results[i],part=(r[0]?.transcript||'').trim();
+        if(!part)continue;
+        if(r.isFinal)appendFinal(part);else interim+=(part+' ');
       }
       setLive(interim.trim());
       if(finalText.trim()||interim.trim())setStatus('Listening… speech detected.','on');
@@ -180,10 +330,14 @@ textarea:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
     recognition.onerror=(event)=>{
       clearTimeout(noResultTimer);
       if(event.error==='no-speech'){setStatus('No speech detected — keep speaking.','warn');setLive('No speech detected yet.')}
-      else if(event.error==='network'){setStatus('Speech service/network error.','warn');showProblem('<strong>Speech recognition needs an internet connection.</strong><br>Check your connection and try again.');}
-      else if(event.error==='not-allowed'||event.error==='service-not-allowed'){userStopped=true;setStatus('Chrome blocked speech recognition.','warn');showProblem('<strong>Speech recognition was blocked.</strong><br>Make sure this is the HTTPS GitHub Pages site and that microphone access is allowed.');}
-      else if(event.error==='audio-capture'){setStatus('Microphone capture failed.','warn');showProblem('<strong>Audio capture failed.</strong><br>Close other apps using the microphone, then use Check Microphone again.');}
-      else setStatus('Speech error: '+event.error,'warn');
+      else if(event.error==='network'){setStatus('Speech service/network error.','warn');showProblem('<strong>Speech recognition needs an internet connection.</strong><br>Check your connection and try again.')}
+      else if(event.error==='not-allowed'||event.error==='service-not-allowed'){
+        userStopped=true;pauseTimer();setStatus('Chrome blocked speech recognition.','warn');
+        showProblem('<strong>Speech recognition was blocked.</strong><br>Make sure this is the HTTPS GitHub Pages site and that microphone access is allowed.');
+      }else if(event.error==='audio-capture'){
+        setStatus('Microphone capture failed.','warn');
+        showProblem('<strong>Audio capture failed.</strong><br>Close other apps using the microphone, then use Check Microphone again.');
+      }else setStatus('Speech error: '+event.error,'warn');
     };
 
     recognition.onend=()=>{
@@ -193,51 +347,117 @@ textarea:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
         clearTimeout(restartTimer);
         restartTimer=setTimeout(()=>{
           if(userStopped||paused)return;
-          try{recognition.lang=lang.value;recognition.start()}catch(e){restartTimer=setTimeout(()=>{if(!userStopped&&!paused)try{recognition.start()}catch(_){}},700)}
+          try{recognition.lang=lang.value;recognition.start()}
+          catch(e){restartTimer=setTimeout(()=>{if(!userStopped&&!paused)try{recognition.start()}catch(_){}},700)}
         },220);
       }else{
-        startBtn.disabled=!micOK; stopTimer();
-        if(paused)setStatus('Paused. Tap Resume to continue.','warn'); else if(userStopped)setStatus('Stopped. Ready.','');
+        startBtn.disabled=!micOK;finishTimer();
+        if(paused){pauseBtn.disabled=false;pauseBtn.textContent='▶ Resume';setStatus('Paused. Tap Resume to continue.','warn')}
+        else if(userStopped)setStatus('Stopped. Ready.','');
       }
     };
   }
 
   async function begin(){
     hideProblem();
-    if(!micOK && !(await checkMicrophone()))return;
+    if(!micOK&&!(await checkMicrophone()))return;
     releaseMic();
     if(!recognition)setup();
     userStopped=false;paused=false;lastFinal='';finalText=text.value.trim();setLive('');
+    if(text.value.trim()===''||userStopped===false&&elapsedMs===0)resetTimer();
     recognition.lang=lang.value;
     try{recognition.start()}catch(e){setTimeout(()=>{try{recognition.start()}catch(_){setStatus('Could not start recognition. Tap Start again.','warn')}},400)}
   }
   function pause(){
-    if(!recognition)return;
-    paused=true;userStopped=false;clearTimeout(restartTimer);
-    try{recognition.stop()}catch(e){}
-    setLive('');setStatus('Pausing…','warn');
+    if(!recognition||userStopped)return;
+    paused=true;userStopped=false;clearTimeout(restartTimer);pauseBtn.textContent='▶ Resume';setLive('');setStatus('Pausing…','warn');
+    try{recognition.stop()}catch(e){pauseTimer()}
   }
   function resume(){
     if(!micOK){begin();return}
-    paused=false;userStopped=false;setLive('');
+    paused=false;userStopped=false;setLive('');pauseBtn.textContent='⏸ Pause';
     try{recognition.lang=lang.value;recognition.start()}catch(e){setTimeout(()=>{try{recognition.start()}catch(_){setStatus('Tap Resume again.','warn')}},350)}
   }
   function stop(){
-    userStopped=true;paused=false;clearTimeout(restartTimer);clearTimeout(noResultTimer);setLive('');
+    userStopped=true;paused=false;clearTimeout(restartTimer);clearTimeout(noResultTimer);setLive('');pauseBtn.textContent='⏸ Pause';
     if(recognition)try{recognition.stop()}catch(e){}
-    stopTimer();setStatus('Stopping…','');
+    finishTimer();scheduleSave();setStatus('Stopping…','');
+  }
+
+  function loadSettings(){
+    try{
+      const saved=JSON.parse(localStorage.getItem(STORAGE)||'null');
+      if(saved?.text){
+        restoreInfo.textContent='Saved '+new Date(saved.when||Date.now()).toLocaleString()+'.';
+        restore.style.display='block';
+        $('restoreBtn').onclick=()=>{text.value=saved.text;finalText=saved.text;counts();restore.style.display='none';if(saved.language)lang.value=saved.language;setStatus('Saved transcript restored.','ok')};
+        $('discardBtn').onclick=()=>{removeSaved();restore.style.display='none';setStatus('Saved copy discarded.','')}
+      }
+    }catch(e){}
+    try{
+      const t=localStorage.getItem(STORAGE+'Settings');
+      if(t){
+        const s=JSON.parse(t);
+        if(typeof s.punctuation==='boolean')punctuation.checked=s.punctuation;
+        if(typeof s.commands==='boolean')commands.checked=s.commands;
+        if(typeof s.autoSave==='boolean')autoSave.checked=s.autoSave;
+        if(typeof s.autoParagraph==='boolean')autoParagraph.checked=s.autoParagraph;
+        if(s.language)lang.value=s.language;
+        if(s.theme)document.documentElement.dataset.theme=s.theme;
+        if(s.fontLevel)fontLevel=s.fontLevel;
+      }
+    }catch(e){}
+    applyFont();updateThemeButton();
+  }
+  function saveSettings(){
+    try{localStorage.setItem(STORAGE+'Settings',JSON.stringify({
+      punctuation:punctuation.checked,commands:commands.checked,autoSave:autoSave.checked,
+      autoParagraph:autoParagraph.checked,language:lang.value,theme:document.documentElement.dataset.theme||'light',fontLevel
+    }))}catch(e){}
+  }
+  function applyFont(){
+    text.classList.remove('font-small','font-large');
+    if(fontLevel<0)text.classList.add('font-small');
+    if(fontLevel>0)text.classList.add('font-large');
+  }
+  function updateThemeButton(){const dark=document.documentElement.dataset.theme==='dark';$('themeBtn').textContent=dark?'☀️':'🌙';$('themeColor').setAttribute('content',dark?'#0f172a':'#111827')}
+  function toggleTheme(){
+    const dark=document.documentElement.dataset.theme==='dark';
+    document.documentElement.dataset.theme=dark?'light':'dark';updateThemeButton();saveSettings();
+  }
+  function toggleFullscreen(){
+    if(document.fullscreenElement){document.exitFullscreen?.();return}
+    if(app.requestFullscreen){app.requestFullscreen().catch(()=>app.classList.add('fullscreen'))}
+    else app.classList.add('fullscreen');
   }
 
   permissionBtn.onclick=checkMicrophone;
   startBtn.onclick=begin;
-  pauseBtn.onclick=()=> paused?resume():pause();
+  pauseBtn.onclick=()=>paused?resume():pause();
   stopBtn.onclick=stop;
-  lang.onchange=()=>{if(recognition)recognition.lang=lang.value};
-  text.oninput=()=>{finalText=text.value;lastFinal='';counts()};
-  $('clear').onclick=()=>{stop();text.value='';finalText='';lastFinal='';counts();setStatus('Text cleared. Ready.','');setLive('')};
-  $('copy').onclick=async()=>{if(!text.value.trim())return;try{await navigator.clipboard.writeText(text.value)}catch(e){text.focus();text.select();document.execCommand('copy')}setStatus('Transcript copied.','ok')};
-  $('download').onclick=()=>{if(!text.value.trim())return;const blob=new Blob([text.value],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='voice-transcript.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),700)};
+  $('undo').onclick=undoLastSentence;
+  $('clear').onclick=clearTranscript;
+  $('copy').onclick=async()=>{
+    if(!text.value.trim())return;
+    try{await navigator.clipboard.writeText(text.value)}catch(e){text.focus();text.select();document.execCommand('copy')}
+    setStatus('Transcript copied.','ok')
+  };
+  $('download').onclick=()=>{
+    if(!text.value.trim())return;
+    const blob=new Blob([text.value],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=url;a.download='voice-transcript-'+new Date().toISOString().slice(0,10)+'.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),700)
+  };
+  $('themeBtn').onclick=toggleTheme;
+  $('fontDown').onclick=()=>{fontLevel=Math.max(-1,fontLevel-1);applyFont();saveSettings()};
+  $('fontUp').onclick=()=>{fontLevel=Math.min(1,fontLevel+1);applyFont();saveSettings()};
+  $('fullBtn').onclick=toggleFullscreen;
+  lang.onchange=()=>{if(recognition)recognition.lang=lang.value;saveSettings()};
+  [punctuation,commands,autoSave,autoParagraph].forEach(x=>x.onchange=()=>{saveSettings();if(x===autoSave&&autoSave.checked)scheduleSave()});
+  text.oninput=()=>{finalText=text.value;lastFinal='';counts();scheduleSave()};
+
+  loadSettings();
   counts();
+  if(!isHTTPS())showProblem('<strong>Tip:</strong> For Android Chrome microphone access, use your HTTPS GitHub Pages address.');
 })();
 </script>
 </body>
