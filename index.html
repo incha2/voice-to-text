@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#111827">
+<title>Voice to Text - Android Chrome</title>
+<style>
+*{box-sizing:border-box}
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
+body{margin:0;background:#f3f4f6;color:#111827}
+.app{max-width:760px;margin:auto;padding:16px;padding-bottom:32px}
+.header{padding:12px 4px 18px}
+h1{font-size:25px;margin:0 0 5px}
+.sub{margin:0;color:#6b7280;font-size:14px}
+.card{background:#fff;border-radius:18px;padding:16px;box-shadow:0 5px 24px rgba(0,0,0,.08)}
+.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+select,button{min-height:48px;border-radius:12px;border:1px solid #d1d5db;background:#fff;padding:10px 13px;font-size:15px;font-weight:600}
+select{width:100%;font-weight:500}
+button.primary{background:#2563eb;border-color:#2563eb;color:#fff}
+button.stop{background:#dc2626;border-color:#dc2626;color:#fff}
+button:disabled{opacity:.48}
+.status{display:flex;align-items:center;gap:10px;margin:15px 0 10px;padding:12px;border-radius:12px;background:#f3f4f6;font-size:14px}
+.dot{width:11px;height:11px;border-radius:50%;background:#9ca3af;flex:none}
+.dot.on{background:#ef4444;box-shadow:0 0 0 6px rgba(239,68,68,.12);animation:pulse 1.2s infinite}
+.dot.ok{background:#16a34a}
+.dot.warn{background:#f59e0b}
+@keyframes pulse{50%{transform:scale(1.2);opacity:.65}}
+textarea{display:block;width:100%;min-height:330px;resize:vertical;border:1px solid #d1d5db;border-radius:14px;padding:14px;font:16px/1.6 system-ui, sans-serif;outline:0}
+textarea:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.meta{display:flex;justify-content:space-between;color:#6b7280;font-size:12px;margin-top:10px}
+.help{margin-top:14px;padding:14px;border-radius:13px;background:#eff6ff;color:#1e3a8a;font-size:13px;line-height:1.55}
+.help strong{color:#172554}
+.dangerbox{display:none;margin-top:14px;padding:14px;border-radius:13px;background:#fef2f2;color:#991b1b;font-size:13px;line-height:1.55}
+.tip{margin-top:12px;color:#6b7280;font-size:12px;line-height:1.5}
+@media(max-width:480px){.controls{grid-template-columns:1fr}.actions{grid-template-columns:1fr}.app{padding:12px}.card{padding:13px}textarea{min-height:300px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <h1>🎙️ Voice to Text</h1>
+    <p class="sub">Optimized for Android Chrome</p>
+  </div>
+
+  <div class="card">
+    <div class="controls">
+      <select id="language" aria-label="Speech language">
+        <option value="en-IN">English (India)</option>
+        <option value="en-US">English (US)</option>
+        <option value="hi-IN">हिन्दी (Hindi)</option>
+        <option value="bn-IN">বাংলা (Bengali)</option>
+        <option value="mr-IN">मराठी (Marathi)</option>
+        <option value="ta-IN">தமிழ் (Tamil)</option>
+        <option value="te-IN">తెలుగు (Telugu)</option>
+        <option value="gu-IN">ગુજરાતી (Gujarati)</option>
+        <option value="kn-IN">ಕನ್ನಡ (Kannada)</option>
+        <option value="ml-IN">മലയാളം (Malayalam)</option>
+        <option value="pa-IN">ਪੰਜਾਬੀ (Punjabi)</option>
+      </select>
+      <button id="permissionBtn">🎤 Check Microphone</button>
+    </div>
+
+    <div class="status">
+      <span id="dot" class="dot"></span>
+      <span id="status">Ready. First check your microphone.</span>
+    </div>
+
+    <div id="problem" class="dangerbox"></div>
+
+    <div class="controls" style="margin-bottom:10px">
+      <button id="start" class="primary" disabled>🎙️ Start Listening</button>
+      <button id="stop" class="stop" disabled>⏹ Stop</button>
+    </div>
+
+    <textarea id="text" placeholder="Your transcript will appear here..." spellcheck="true"></textarea>
+
+    <div class="actions">
+      <button id="copy">📋 Copy</button>
+      <button id="download">💾 Save TXT</button>
+      <button id="clear">🗑️ Clear</button>
+    </div>
+
+    <div class="meta">
+      <span><span id="words">0</span> words</span>
+      <span><span id="chars">0</span> characters</span>
+    </div>
+
+    <div class="help">
+      <strong>Android Chrome:</strong> Android's Chrome permission and a website's microphone permission are separate.
+      This page checks the actual microphone before starting speech recognition.
+      If Chrome asks for permission, choose <strong>Allow while using the site</strong>.
+    </div>
+
+    <div class="tip">
+      For the most reliable speech recognition, open this tool from an <strong>HTTPS website</strong>.
+      A downloaded <code>.html</code> file can have browser-origin limitations even when Chrome's Android microphone permission is enabled.
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+  const lang = document.getElementById('language');
+  const permissionBtn = document.getElementById('permissionBtn');
+  const startBtn = document.getElementById('start');
+  const stopBtn = document.getElementById('stop');
+  const text = document.getElementById('text');
+  const status = document.getElementById('status');
+  const dot = document.getElementById('dot');
+  const problem = document.getElementById('problem');
+  const words = document.getElementById('words');
+  const chars = document.getElementById('chars');
+
+  let recognition = null;
+  let finalText = '';
+  let userStopped = false;
+  let micStream = null;
+  let micOK = false;
+
+  function setStatus(msg, type='') {
+    status.textContent = msg;
+    dot.className = 'dot' + (type ? ' ' + type : '');
+  }
+
+  function showProblem(msg) {
+    problem.style.display = 'block';
+    problem.innerHTML = msg;
+  }
+
+  function hideProblem() {
+    problem.style.display = 'none';
+    problem.textContent = '';
+  }
+
+  function updateCounts() {
+    const s = text.value.trim();
+    words.textContent = s ? s.split(/\s+/).length : 0;
+    chars.textContent = text.value.length;
+  }
+
+  function isHTTPS() {
+    return location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  }
+
+  if (!SR) {
+    setStatus('Speech recognition is not available in this Chrome environment.', 'warn');
+    showProblem('<strong>Speech recognition unavailable.</strong><br>Use the latest Google Chrome and make sure JavaScript is enabled.');
+  }
+
+  async function checkMicrophone() {
+    hideProblem();
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      setStatus('Microphone access is not available from this page.', 'warn');
+      showProblem('<strong>Microphone API unavailable.</strong><br>For Android Chrome, use an HTTPS website rather than opening the HTML file directly from Downloads.');
+      return false;
+    }
+
+    try {
+      if (micStream) {
+        micStream.getTracks().forEach(t => t.stop());
+        micStream = null;
+      }
+
+      micStream = await navigator.mediaDevices.getUserMedia({audio:true});
+      micOK = true;
+      setStatus('Microphone is working. You can start listening.', 'ok');
+      startBtn.disabled = !SR;
+
+      if (!isHTTPS()) {
+        showProblem('<strong>Microphone works, but this file is not running from HTTPS.</strong><br>For best Android Chrome speech-recognition reliability, host this HTML on an HTTPS website.');
+      }
+      return true;
+    } catch (e) {
+      micOK = false;
+      startBtn.disabled = true;
+
+      if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
+        setStatus('Chrome did not grant this page microphone access.', 'warn');
+        showProblem('<strong>Page microphone permission was denied.</strong><br>Android may show Chrome as allowed, but Chrome can still block the individual website/page. Open Chrome site settings and set Microphone to <strong>Allow</strong>, then reload this page.');
+      } else if (e.name === 'NotFoundError') {
+        setStatus('No microphone was found.', 'warn');
+        showProblem('<strong>No microphone detected.</strong><br>Check that your phone has a working microphone and that no hardware/accessibility setting is blocking it.');
+      } else if (e.name === 'SecurityError') {
+        setStatus('This page is not allowed to request the microphone.', 'warn');
+        showProblem('<strong>Secure-origin restriction.</strong><br>Open this tool from an HTTPS website. Directly opening a downloaded HTML file may not provide the required browser security context.');
+      } else {
+        setStatus('Could not access the microphone: ' + e.name, 'warn');
+        showProblem('<strong>Microphone error:</strong> ' + e.message + '<br>Try Chrome → Settings → Site settings → Microphone and reload this page.');
+      }
+      return false;
+    }
+  }
+
+  function setupRecognition() {
+    if (!SR) return;
+
+    recognition = new SR();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.maxAlternatives = 1;
+    recognition.lang = lang.value;
+
+    recognition.onstart = () => {
+      setStatus('Listening… speak now.', 'on');
+      startBtn.disabled = true;
+      stopBtn.disabled = false;
+      permissionBtn.disabled = true;
+    };
+
+    recognition.onresult = (event) => {
+      let interim = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const r = event.results[i];
+        if (r.isFinal) {
+          const part = r[0].transcript.trim();
+          if (part) finalText += part + ' ';
+        } else {
+          interim += r[0].transcript;
+        }
+      }
+      text.value = (finalText + interim).replace(/\s+/g, ' ').trimStart();
+      updateCounts();
+    };
+
+    recognition.onerror = (event) => {
+      console.log('Speech recognition:', event.error);
+
+      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+        userStopped = true;
+        setStatus('Chrome blocked speech recognition.', 'warn');
+        showProblem('<strong>Speech recognition was blocked.</strong><br>Your Android Chrome microphone permission may be allowed, but the speech-recognition service can still reject this page. If you opened this as a downloaded HTML file, use the HTTPS version of the tool.');
+      } else if (event.error === 'no-speech') {
+        setStatus('No speech detected. You can keep speaking.', 'warn');
+      } else if (event.error === 'audio-capture') {
+        setStatus('Chrome could not capture microphone audio.', 'warn');
+        showProblem('<strong>Audio capture failed.</strong><br>Close other apps using the microphone, then press Check Microphone again.');
+      } else if (event.error === 'network') {
+        setStatus('Speech service/network error.', 'warn');
+        showProblem('<strong>Speech recognition needs a working connection.</strong><br>Check your internet connection and try again.');
+      } else {
+        setStatus('Speech error: ' + event.error, 'warn');
+      }
+    };
+
+    recognition.onend = () => {
+      stopBtn.disabled = true;
+      permissionBtn.disabled = false;
+
+      if (!userStopped && micOK) {
+        // Chrome may end recognition after silence. Restart carefully.
+        setTimeout(() => {
+          if (!userStopped && micOK) {
+            try { recognition.lang = lang.value; recognition.start(); }
+            catch(e) {}
+          }
+        }, 250);
+      } else {
+        startBtn.disabled = !micOK;
+        if (userStopped) setStatus('Stopped. Ready.', '');
+      }
+    };
+  }
+
+  permissionBtn.addEventListener('click', checkMicrophone);
+
+  startBtn.addEventListener('click', async () => {
+    hideProblem();
+    if (!micOK) {
+      const ok = await checkMicrophone();
+      if (!ok) return;
+    }
+
+    if (!recognition) setupRecognition();
+    finalText = text.value.trim();
+    userStopped = false;
+    recognition.lang = lang.value;
+
+    try {
+      recognition.start();
+    } catch(e) {
+      setStatus('Could not start recognition. Try again.', 'warn');
+    }
+  });
+
+  stopBtn.addEventListener('click', () => {
+    userStopped = true;
+    if (recognition) {
+      try { recognition.stop(); } catch(e) {}
+    }
+    startBtn.disabled = !micOK;
+    stopBtn.disabled = true;
+  });
+
+  lang.addEventListener('change', () => {
+    if (recognition) recognition.lang = lang.value;
+  });
+
+  text.addEventListener('input', () => {
+    finalText = text.value;
+    updateCounts();
+  });
+
+  document.getElementById('clear').addEventListener('click', () => {
+    text.value = '';
+    finalText = '';
+    updateCounts();
+    setStatus('Text cleared. Ready.', '');
+  });
+
+  document.getElementById('copy').addEventListener('click', async () => {
+    if (!text.value.trim()) return;
+    try {
+      await navigator.clipboard.writeText(text.value);
+      setStatus('Transcript copied.', 'ok');
+    } catch(e) {
+      text.focus();
+      text.select();
+      document.execCommand('copy');
+      setStatus('Transcript copied.', 'ok');
+    }
+  });
+
+  document.getElementById('download').addEventListener('click', () => {
+    if (!text.value.trim()) return;
+    const blob = new Blob([text.value], {type:'text/plain;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'voice-transcript.txt';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 500);
+  });
+
+  // Do not request microphone automatically; Android browsers require a clear user action.
+  updateCounts();
+})();
+</script>
+</body>
+</html>
