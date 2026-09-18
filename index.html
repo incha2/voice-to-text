@@ -4,48 +4,52 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#111827">
-<title>Voice to Text - Android Chrome (Fixed 2)</title>
+<title>Voice to Text — Android Chrome</title>
 <style>
 *{box-sizing:border-box}
 :root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
 body{margin:0;background:#f3f4f6;color:#111827}
-.app{max-width:760px;margin:auto;padding:16px;padding-bottom:32px}
-.header{padding:12px 4px 18px}
-h1{font-size:25px;margin:0 0 5px}
+.app{max-width:760px;margin:auto;padding:12px;padding-bottom:36px}
+.header{padding:10px 4px 16px}
+h1{font-size:26px;line-height:1.15;margin:0 0 5px}
 .sub{margin:0;color:#6b7280;font-size:14px}
-.card{background:#fff;border-radius:18px;padding:16px;box-shadow:0 5px 24px rgba(0,0,0,.08)}
-.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-select,button{min-height:48px;border-radius:12px;border:1px solid #d1d5db;background:#fff;padding:10px 13px;font-size:15px;font-weight:600}
+.card{background:#fff;border-radius:20px;padding:14px;box-shadow:0 5px 24px rgba(0,0,0,.08)}
+select,button{min-height:50px;border-radius:13px;border:1px solid #d1d5db;background:#fff;padding:10px 13px;font-size:15px;font-weight:650}
 select{width:100%;font-weight:500}
+button{touch-action:manipulation}
 button.primary{background:#2563eb;border-color:#2563eb;color:#fff}
+button.pause{background:#f59e0b;border-color:#f59e0b;color:#fff}
 button.stop{background:#dc2626;border-color:#dc2626;color:#fff}
-button:disabled{opacity:.48}
-.status{display:flex;align-items:center;gap:10px;margin:15px 0 10px;padding:12px;border-radius:12px;background:#f3f4f6;font-size:14px}
+button:disabled{opacity:.42}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.status{display:flex;align-items:center;gap:10px;margin:12px 0 9px;padding:12px;border-radius:13px;background:#f3f4f6;font-size:14px;min-height:46px}
 .dot{width:11px;height:11px;border-radius:50%;background:#9ca3af;flex:none}
-.dot.on{background:#ef4444;box-shadow:0 0 0 6px rgba(239,68,68,.12);animation:pulse 1.2s infinite}
-.dot.ok{background:#16a34a}
-.dot.warn{background:#f59e0b}
+.dot.on{background:#ef4444;box-shadow:0 0 0 6px rgba(239,68,68,.12);animation:pulse 1.15s infinite}
+.dot.ok{background:#16a34a}.dot.warn{background:#f59e0b}
 @keyframes pulse{50%{transform:scale(1.2);opacity:.65}}
-textarea{display:block;width:100%;min-height:330px;resize:vertical;border:1px solid #d1d5db;border-radius:14px;padding:14px;font:16px/1.6 system-ui, sans-serif;outline:0}
+.controls{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:9px;margin-bottom:10px}
+.label{font-size:12px;font-weight:700;color:#6b7280;margin:12px 2px 6px;text-transform:uppercase;letter-spacing:.04em}
+textarea{display:block;width:100%;min-height:320px;resize:vertical;border:1px solid #d1d5db;border-radius:14px;padding:14px;font:16px/1.62 system-ui,sans-serif;outline:0;background:#fff}
 textarea:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.live{min-height:42px;padding:10px 12px;border:1px dashed #cbd5e1;border-radius:12px;background:#f8fafc;color:#64748b;font-size:14px;line-height:1.45}
+.live.active{color:#1d4ed8;background:#eff6ff;border-color:#93c5fd}
 .actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
-.meta{display:flex;justify-content:space-between;color:#6b7280;font-size:12px;margin-top:10px}
-.help{margin-top:14px;padding:14px;border-radius:13px;background:#eff6ff;color:#1e3a8a;font-size:13px;line-height:1.55}
-.help strong{color:#172554}
-.dangerbox{display:none;margin-top:14px;padding:14px;border-radius:13px;background:#fef2f2;color:#991b1b;font-size:13px;line-height:1.55}
+.meta{display:flex;justify-content:space-between;gap:10px;color:#6b7280;font-size:12px;margin-top:9px;flex-wrap:wrap}
+.help{margin-top:14px;padding:13px;border-radius:13px;background:#eff6ff;color:#1e3a8a;font-size:13px;line-height:1.55}
+.danger{display:none;margin-top:12px;padding:13px;border-radius:13px;background:#fef2f2;color:#991b1b;font-size:13px;line-height:1.55}
 .tip{margin-top:12px;color:#6b7280;font-size:12px;line-height:1.5}
-@media(max-width:480px){.controls{grid-template-columns:1fr}.actions{grid-template-columns:1fr}.app{padding:12px}.card{padding:13px}textarea{min-height:300px}}
+.small{font-size:12px;color:#6b7280}
+@media(max-width:520px){.row,.controls{grid-template-columns:1fr}.actions{grid-template-columns:1fr}.app{padding:10px}.card{padding:12px}textarea{min-height:300px}}
 </style>
 </head>
 <body>
 <div class="app">
   <div class="header">
     <h1>🎙️ Voice to Text</h1>
-    <p class="sub">Optimized for Android Chrome</p>
+    <p class="sub">Android Chrome • stable dictation mode</p>
   </div>
-
   <div class="card">
-    <div class="controls">
+    <div class="row">
       <select id="language" aria-label="Speech language">
         <option value="en-IN">English (India)</option>
         <option value="en-US">English (US)</option>
@@ -62,19 +66,20 @@ textarea:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
       <button id="permissionBtn">🎤 Check Microphone</button>
     </div>
 
-    <div class="status">
-      <span id="dot" class="dot"></span>
-      <span id="status">Ready. First check your microphone.</span>
-    </div>
+    <div class="status"><span id="dot" class="dot"></span><span id="status">Ready. Check microphone once, then start.</span><span id="timer" class="small" style="margin-left:auto"></span></div>
+    <div id="problem" class="danger"></div>
 
-    <div id="problem" class="dangerbox"></div>
-
-    <div class="controls" style="margin-bottom:10px">
+    <div class="controls">
       <button id="start" class="primary" disabled>🎙️ Start Listening</button>
+      <button id="pause" class="pause" disabled>⏸ Pause</button>
       <button id="stop" class="stop" disabled>⏹ Stop</button>
     </div>
 
-    <textarea id="text" placeholder="Your transcript will appear here..." spellcheck="true"></textarea>
+    <div class="label">Transcript</div>
+    <textarea id="text" placeholder="Your final transcript will appear here…" spellcheck="true"></textarea>
+
+    <div class="label">Live speech</div>
+    <div id="live" class="live">Nothing being recognized right now.</div>
 
     <div class="actions">
       <button id="copy">📋 Copy</button>
@@ -85,304 +90,154 @@ textarea:focus{border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
     <div class="meta">
       <span><span id="words">0</span> words</span>
       <span><span id="chars">0</span> characters</span>
+      <span>Final text only — no interim duplicates</span>
     </div>
 
     <div class="help">
-      <strong>Android Chrome:</strong> Android's Chrome permission and a website's microphone permission are separate.
-      This page checks the microphone first, then releases the test microphone before starting speech recognition. It also prevents Chrome from appending the same recognition result more than once.
-      If Chrome asks for permission, choose <strong>Allow while using the site</strong>.
+      <strong>How this version works:</strong> Chrome recognition runs in short sessions and is restarted automatically after Chrome ends a session. Final speech is added only once; interim speech is shown separately in <strong>Live speech</strong>. This avoids the repeated-word problem you experienced.
     </div>
-
-    <div class="tip">
-      For the most reliable speech recognition, open this tool from an <strong>HTTPS website</strong>.
-      A downloaded <code>.html</code> file can have browser-origin limitations even when Chrome's Android microphone permission is enabled.
-    </div>
+    <div class="tip">Keep an internet connection while dictating. Chrome speech recognition may use a server-based recognition service. citeturn0search0</div>
   </div>
 </div>
-
 <script>
 (() => {
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const $ = id => document.getElementById(id);
+  const lang = $('language'), permissionBtn=$('permissionBtn'), startBtn=$('start'), pauseBtn=$('pause'), stopBtn=$('stop');
+  const text=$('text'), live=$('live'), status=$('status'), dot=$('dot'), problem=$('problem'), timer=$('timer'), words=$('words'), chars=$('chars');
+  let recognition=null, micOK=false, micStream=null, userStopped=true, paused=false, restarting=false;
+  let finalText='', lastFinal='', sessionStarted=0, timerId=null, restartTimer=null, noResultTimer=null;
 
-  const lang = document.getElementById('language');
-  const permissionBtn = document.getElementById('permissionBtn');
-  const startBtn = document.getElementById('start');
-  const stopBtn = document.getElementById('stop');
-  const text = document.getElementById('text');
-  const status = document.getElementById('status');
-  const dot = document.getElementById('dot');
-  const problem = document.getElementById('problem');
-  const words = document.getElementById('words');
-  const chars = document.getElementById('chars');
+  function setStatus(msg,type=''){status.textContent=msg;dot.className='dot'+(type?' '+type:'')}
+  function showProblem(html){problem.innerHTML=html;problem.style.display='block'}
+  function hideProblem(){problem.innerHTML='';problem.style.display='none'}
+  function counts(){const s=text.value.trim();words.textContent=s?s.split(/\s+/).length:0;chars.textContent=text.value.length}
+  function setLive(s){live.textContent=s||'Nothing being recognized right now.';live.className='live'+(s?' active':'')}
+  function isHTTPS(){return location.protocol==='https:'||location.hostname==='localhost'||location.hostname==='127.0.0.1'}
+  function releaseMic(){if(micStream){micStream.getTracks().forEach(t=>t.stop());micStream=null}}
+  function formatTime(ms){const s=Math.floor(ms/1000);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0')}
+  function startTimer(){sessionStarted=Date.now();clearInterval(timerId);timer.textContent='00:00';timerId=setInterval(()=>timer.textContent=formatTime(Date.now()-sessionStarted),500)}
+  function stopTimer(){clearInterval(timerId);timerId=null;timer.textContent=''}
 
-  let recognition = null;
-  let finalText = '';
-  let userStopped = false;
-  let micStream = null;
-  let micOK = false;
-  let resultTimer = null;
-  let seenFinalResults = new Set();
+  if(!SR){setStatus('Speech recognition is not available in this Chrome environment.','warn');showProblem('<strong>Speech recognition unavailable.</strong><br>Use current Google Chrome with JavaScript enabled.');startBtn.disabled=true;return}
 
-  function setStatus(msg, type='') {
-    status.textContent = msg;
-    dot.className = 'dot' + (type ? ' ' + type : '');
-  }
-
-  function showProblem(msg) {
-    problem.style.display = 'block';
-    problem.innerHTML = msg;
-  }
-
-  function hideProblem() {
-    problem.style.display = 'none';
-    problem.textContent = '';
-  }
-
-  function updateCounts() {
-    const s = text.value.trim();
-    words.textContent = s ? s.split(/\s+/).length : 0;
-    chars.textContent = text.value.length;
-  }
-
-  function isHTTPS() {
-    return location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-  }
-
-  if (!SR) {
-    setStatus('Speech recognition is not available in this Chrome environment.', 'warn');
-    showProblem('<strong>Speech recognition unavailable.</strong><br>Use the latest Google Chrome and make sure JavaScript is enabled.');
-  }
-
-  async function checkMicrophone() {
-    hideProblem();
-
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      setStatus('Microphone access is not available from this page.', 'warn');
-      showProblem('<strong>Microphone API unavailable.</strong><br>For Android Chrome, use an HTTPS website rather than opening the HTML file directly from Downloads.');
-      return false;
-    }
-
-    try {
-      if (micStream) {
-        micStream.getTracks().forEach(t => t.stop());
-        micStream = null;
-      }
-
-      micStream = await navigator.mediaDevices.getUserMedia({audio:true});
-      micOK = true;
-
-      // IMPORTANT on Android Chrome: do not keep a getUserMedia() stream open
-      // while SpeechRecognition is trying to capture the microphone. Keeping
-      // this stream alive can grab the microphone and cause recognition to
-      // show "Listening" without ever producing results.
-      micStream.getTracks().forEach(t => t.stop());
-      micStream = null;
-
-      setStatus('Microphone permission verified. Ready to listen.', 'ok');
-      startBtn.disabled = !SR;
-
-      if (!isHTTPS()) {
-        showProblem('<strong>Microphone works, but this file is not running from HTTPS.</strong><br>For best Android Chrome speech-recognition reliability, host this HTML on an HTTPS website.');
-      }
+  async function checkMicrophone(){
+    hideProblem(); releaseMic();
+    if(!navigator.mediaDevices?.getUserMedia){setStatus('Microphone API unavailable.','warn');showProblem('<strong>Microphone API unavailable.</strong><br>Use the HTTPS GitHub Pages version, not the downloaded HTML file.');return false}
+    try{
+      micStream=await navigator.mediaDevices.getUserMedia({audio:true});
+      micOK=true; releaseMic(); startBtn.disabled=false;
+      setStatus('Microphone verified. Ready to listen.','ok');
+      if(!isHTTPS()) showProblem('<strong>This page is not HTTPS.</strong><br>Use the GitHub Pages HTTPS address for the most reliable Android Chrome behavior.');
       return true;
-    } catch (e) {
-      micOK = false;
-      startBtn.disabled = true;
-
-      if (e.name === 'NotAllowedError' || e.name === 'PermissionDeniedError') {
-        setStatus('Chrome did not grant this page microphone access.', 'warn');
-        showProblem('<strong>Page microphone permission was denied.</strong><br>Android may show Chrome as allowed, but Chrome can still block the individual website/page. Open Chrome site settings and set Microphone to <strong>Allow</strong>, then reload this page.');
-      } else if (e.name === 'NotFoundError') {
-        setStatus('No microphone was found.', 'warn');
-        showProblem('<strong>No microphone detected.</strong><br>Check that your phone has a working microphone and that no hardware/accessibility setting is blocking it.');
-      } else if (e.name === 'SecurityError') {
-        setStatus('This page is not allowed to request the microphone.', 'warn');
-        showProblem('<strong>Secure-origin restriction.</strong><br>Open this tool from an HTTPS website. Directly opening a downloaded HTML file may not provide the required browser security context.');
-      } else {
-        setStatus('Could not access the microphone: ' + e.name, 'warn');
-        showProblem('<strong>Microphone error:</strong> ' + e.message + '<br>Try Chrome → Settings → Site settings → Microphone and reload this page.');
-      }
+    }catch(e){
+      micOK=false;startBtn.disabled=true;
+      if(e.name==='NotAllowedError'||e.name==='PermissionDeniedError'){
+        setStatus('Microphone permission was denied.','warn');showProblem('<strong>Chrome blocked this page from using the microphone.</strong><br>Open Chrome site settings for this website and set Microphone to Allow, then reload.');
+      }else if(e.name==='NotFoundError'){setStatus('No microphone found.','warn');showProblem('<strong>No microphone detected.</strong><br>Check the phone microphone and close other apps that may be using it.');}
+      else{setStatus('Microphone error: '+e.name,'warn');showProblem('<strong>Microphone error:</strong> '+(e.message||e.name));}
       return false;
     }
   }
 
-  function setupRecognition() {
-    if (!SR) return;
+  function appendFinal(part){
+    part=(part||'').replace(/\s+/g,' ').trim(); if(!part)return;
+    // Prevent duplicate final chunks, including Chrome repeating the same final phrase.
+    if(part===lastFinal)return;
+    const current=finalText.trim();
+    if(current && (current===part || current.endsWith(' '+part) || part===current.slice(-part.length))) return;
+    finalText=(current+' '+part).replace(/\s+/g,' ').trim()+' ';
+    lastFinal=part;
+    text.value=finalText.trim();counts();
+  }
 
-    recognition = new SR();
-    // Android Chrome can resend the cumulative results list when continuous
-    // recognition is enabled. Use short recognition sessions and restart after
-    // Chrome ends them; this prevents the same final transcript being appended
-    // repeatedly.
-    recognition.continuous = false;
-    recognition.interimResults = true;
-    recognition.maxAlternatives = 1;
-    recognition.lang = lang.value;
+  function setup(){
+    recognition=new SR();
+    recognition.continuous=false;
+    recognition.interimResults=true;
+    recognition.maxAlternatives=1;
+    recognition.lang=lang.value;
 
-    recognition.onstart = () => {
-      setStatus('Listening… speak now.', 'on');
-      startBtn.disabled = true;
-      stopBtn.disabled = false;
-      permissionBtn.disabled = true;
+    recognition.onstart=()=>{
+      restarting=false;startBtn.disabled=true;pauseBtn.disabled=false;stopBtn.disabled=false;permissionBtn.disabled=true;
+      setStatus(paused?'Paused':'Listening… speak now.',paused?'warn':'on');
+      startTimer();
+      clearTimeout(noResultTimer);
+      noResultTimer=setTimeout(()=>{if(!userStopped&&!paused&&live.textContent==='Nothing being recognized right now.')setStatus('Listening… waiting for speech.', 'warn')},7000);
     };
 
-    recognition.onresult = (event) => {
-      clearTimeout(resultTimer);
-      hideProblem();
-
-      // IMPORTANT: event.results is cumulative in continuous recognition, and
-      // some Chrome builds may report resultIndex=0 repeatedly. Never append
-      // every result on every event. Only append a final result index once.
-      let interim = '';
-      for (let i = event.resultIndex; i < event.results.length; i++) {
-        const r = event.results[i];
-        const part = (r[0]?.transcript || '').trim();
-        if (!part) continue;
-
-        if (r.isFinal) {
-          if (!seenFinalResults.has(i)) {
-            finalText = (finalText.trim() + ' ' + part).trim() + ' ';
-            seenFinalResults.add(i);
-          }
-        } else {
-          interim += part + ' ';
-        }
+    recognition.onresult=(event)=>{
+      clearTimeout(noResultTimer); hideProblem();
+      let interim='';
+      for(let i=event.resultIndex;i<event.results.length;i++){
+        const r=event.results[i]; const part=(r[0]?.transcript||'').trim(); if(!part)continue;
+        if(r.isFinal) appendFinal(part); else interim+=(part+' ');
       }
-
-      text.value = (finalText + interim).replace(/\s+/g, ' ').trim();
-      updateCounts();
-      if (text.value.trim()) setStatus('Listening… speech detected.', 'on');
+      setLive(interim.trim());
+      if(finalText.trim()||interim.trim())setStatus('Listening… speech detected.','on');
     };
 
-    recognition.onerror = (event) => {
-      console.log('Speech recognition:', event.error);
-
-      if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-        userStopped = true;
-        setStatus('Chrome blocked speech recognition.', 'warn');
-        showProblem('<strong>Speech recognition was blocked.</strong><br>Your Android Chrome microphone permission may be allowed, but the speech-recognition service can still reject this page. If you opened this as a downloaded HTML file, use the HTTPS version of the tool.');
-      } else if (event.error === 'no-speech') {
-        setStatus('No speech detected. You can keep speaking.', 'warn');
-      } else if (event.error === 'audio-capture') {
-        setStatus('Chrome could not capture microphone audio.', 'warn');
-        showProblem('<strong>Audio capture failed.</strong><br>Close other apps using the microphone, then press Check Microphone again.');
-      } else if (event.error === 'network') {
-        setStatus('Speech service/network error.', 'warn');
-        showProblem('<strong>Speech recognition needs a working connection.</strong><br>Check your internet connection and try again.');
-      } else {
-        setStatus('Speech error: ' + event.error, 'warn');
-      }
+    recognition.onerror=(event)=>{
+      clearTimeout(noResultTimer);
+      if(event.error==='no-speech'){setStatus('No speech detected — keep speaking.','warn');setLive('No speech detected yet.')}
+      else if(event.error==='network'){setStatus('Speech service/network error.','warn');showProblem('<strong>Speech recognition needs an internet connection.</strong><br>Check your connection and try again.');}
+      else if(event.error==='not-allowed'||event.error==='service-not-allowed'){userStopped=true;setStatus('Chrome blocked speech recognition.','warn');showProblem('<strong>Speech recognition was blocked.</strong><br>Make sure this is the HTTPS GitHub Pages site and that microphone access is allowed.');}
+      else if(event.error==='audio-capture'){setStatus('Microphone capture failed.','warn');showProblem('<strong>Audio capture failed.</strong><br>Close other apps using the microphone, then use Check Microphone again.');}
+      else setStatus('Speech error: '+event.error,'warn');
     };
 
-    recognition.onend = () => {
-      stopBtn.disabled = true;
-      seenFinalResults = new Set();
-      permissionBtn.disabled = false;
-
-      if (!userStopped && micOK) {
-        // Chrome may end recognition after silence. Restart carefully.
-        setTimeout(() => {
-          if (!userStopped && micOK) {
-            try { recognition.lang = lang.value; recognition.start(); }
-            catch(e) {}
-          }
-        }, 250);
-      } else {
-        startBtn.disabled = !micOK;
-        if (userStopped) setStatus('Stopped. Ready.', '');
+    recognition.onend=()=>{
+      clearTimeout(noResultTimer);releaseMic();pauseBtn.disabled=true;stopBtn.disabled=true;permissionBtn.disabled=false;setLive('');
+      if(!userStopped&&!paused){
+        setStatus('Reconnecting speech recognition…','on');
+        clearTimeout(restartTimer);
+        restartTimer=setTimeout(()=>{
+          if(userStopped||paused)return;
+          try{recognition.lang=lang.value;recognition.start()}catch(e){restartTimer=setTimeout(()=>{if(!userStopped&&!paused)try{recognition.start()}catch(_){}},700)}
+        },220);
+      }else{
+        startBtn.disabled=!micOK; stopTimer();
+        if(paused)setStatus('Paused. Tap Resume to continue.','warn'); else if(userStopped)setStatus('Stopped. Ready.','');
       }
     };
   }
 
-  permissionBtn.addEventListener('click', checkMicrophone);
-
-  startBtn.addEventListener('click', async () => {
+  async function begin(){
     hideProblem();
-    if (!micOK) {
-      const ok = await checkMicrophone();
-      if (!ok) return;
-    }
+    if(!micOK && !(await checkMicrophone()))return;
+    releaseMic();
+    if(!recognition)setup();
+    userStopped=false;paused=false;lastFinal='';finalText=text.value.trim();setLive('');
+    recognition.lang=lang.value;
+    try{recognition.start()}catch(e){setTimeout(()=>{try{recognition.start()}catch(_){setStatus('Could not start recognition. Tap Start again.','warn')}},400)}
+  }
+  function pause(){
+    if(!recognition)return;
+    paused=true;userStopped=false;clearTimeout(restartTimer);
+    try{recognition.stop()}catch(e){}
+    setLive('');setStatus('Pausing…','warn');
+  }
+  function resume(){
+    if(!micOK){begin();return}
+    paused=false;userStopped=false;setLive('');
+    try{recognition.lang=lang.value;recognition.start()}catch(e){setTimeout(()=>{try{recognition.start()}catch(_){setStatus('Tap Resume again.','warn')}},350)}
+  }
+  function stop(){
+    userStopped=true;paused=false;clearTimeout(restartTimer);clearTimeout(noResultTimer);setLive('');
+    if(recognition)try{recognition.stop()}catch(e){}
+    stopTimer();setStatus('Stopping…','');
+  }
 
-    // Make absolutely sure the microphone test stream is not holding the mic.
-    if (micStream) {
-      micStream.getTracks().forEach(t => t.stop());
-      micStream = null;
-    }
-
-    if (!recognition) setupRecognition();
-    finalText = text.value.trim();
-    seenFinalResults = new Set();
-    userStopped = false;
-    recognition.lang = lang.value;
-
-    try {
-      recognition.start();
-      clearTimeout(resultTimer);
-      resultTimer = setTimeout(() => {
-        if (!userStopped && !text.value.trim()) {
-          showProblem('<strong>Listening is active, but Chrome has not returned any speech results yet.</strong><br>Check that your phone has an internet connection. If this continues, stop and start again.');
-          setStatus('Listening, but no speech result received.', 'warn');
-        }
-      }, 8000);
-    } catch(e) {
-      setStatus('Could not start recognition. Try again.', 'warn');
-    }
-  });
-
-  stopBtn.addEventListener('click', () => {
-    clearTimeout(resultTimer);
-    userStopped = true;
-    if (recognition) {
-      try { recognition.stop(); } catch(e) {}
-    }
-    startBtn.disabled = !micOK;
-    stopBtn.disabled = true;
-  });
-
-  lang.addEventListener('change', () => {
-    if (recognition) recognition.lang = lang.value;
-  });
-
-  text.addEventListener('input', () => {
-    finalText = text.value;
-    updateCounts();
-  });
-
-  document.getElementById('clear').addEventListener('click', () => {
-    text.value = '';
-    finalText = '';
-    updateCounts();
-    setStatus('Text cleared. Ready.', '');
-  });
-
-  document.getElementById('copy').addEventListener('click', async () => {
-    if (!text.value.trim()) return;
-    try {
-      await navigator.clipboard.writeText(text.value);
-      setStatus('Transcript copied.', 'ok');
-    } catch(e) {
-      text.focus();
-      text.select();
-      document.execCommand('copy');
-      setStatus('Transcript copied.', 'ok');
-    }
-  });
-
-  document.getElementById('download').addEventListener('click', () => {
-    if (!text.value.trim()) return;
-    const blob = new Blob([text.value], {type:'text/plain;charset=utf-8'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'voice-transcript.txt';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 500);
-  });
-
-  // Do not request microphone automatically; Android browsers require a clear user action.
-  updateCounts();
+  permissionBtn.onclick=checkMicrophone;
+  startBtn.onclick=begin;
+  pauseBtn.onclick=()=> paused?resume():pause();
+  stopBtn.onclick=stop;
+  lang.onchange=()=>{if(recognition)recognition.lang=lang.value};
+  text.oninput=()=>{finalText=text.value;lastFinal='';counts()};
+  $('clear').onclick=()=>{stop();text.value='';finalText='';lastFinal='';counts();setStatus('Text cleared. Ready.','');setLive('')};
+  $('copy').onclick=async()=>{if(!text.value.trim())return;try{await navigator.clipboard.writeText(text.value)}catch(e){text.focus();text.select();document.execCommand('copy')}setStatus('Transcript copied.','ok')};
+  $('download').onclick=()=>{if(!text.value.trim())return;const blob=new Blob([text.value],{type:'text/plain;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='voice-transcript.txt';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),700)};
+  counts();
 })();
 </script>
 </body>
